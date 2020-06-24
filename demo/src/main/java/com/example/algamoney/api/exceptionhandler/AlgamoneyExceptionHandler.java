@@ -20,6 +20,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+/**
+ * @author Rodrigo
+ *
+ */
 @ControllerAdvice
 public class AlgamoneyExceptionHandler extends ResponseEntityExceptionHandler {
 	
@@ -68,52 +72,5 @@ public class AlgamoneyExceptionHandler extends ResponseEntityExceptionHandler {
 
 		return erros;
 	}
-
-	public static class Erro {
-
-		private String mensagemUsuario;
-		private String mensagemDesenvolvedor;
-
-		public Erro(String mensagemUsuario, String mensagemDesenvolvedor) {
-			super();
-			this.mensagemUsuario = mensagemUsuario;
-			this.mensagemDesenvolvedor = mensagemDesenvolvedor;
-		}
-
-		public String getMensagemUsuario() {
-			return mensagemUsuario;
-		}
-
-		public String getMensagemDesenvolvedor() {
-			return mensagemDesenvolvedor;
-		}
-
-	}
-	
-	public class ExceptionResponse {
-		private String mensagem;
-		private String detalhes;
-		private String httpCodeMessage;
-
-		public ExceptionResponse(String message, String details, String httpCodeMessage) {
-			super();
-			this.mensagem = message;
-			this.detalhes = details;
-			this.httpCodeMessage = httpCodeMessage;
-		}
-
-		public String getHttpCodeMessage() {
-			return httpCodeMessage;
-		}
-
-		public String getMensagem() {
-			return mensagem;
-		}
-
-		public String getDetalhes() {
-			return detalhes;
-		}
-	}
-	
 	
 }

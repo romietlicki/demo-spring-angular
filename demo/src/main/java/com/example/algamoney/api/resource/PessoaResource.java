@@ -28,6 +28,10 @@ import com.example.algamoney.api.model.Pessoa;
 import com.example.algamoney.api.repository.PessoaRepository;
 import com.example.algamoney.api.service.PessoaService;
 
+/**
+ * @author Rodrigo
+ *
+ */
 @RestController
 @RequestMapping("/pessoas")
 public class PessoaResource {
