@@ -3,6 +3,7 @@ package com.example.algamoney.api.exceptionhandler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -15,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -39,33 +41,39 @@ public class AlgamoneyExceptionHandler extends ResponseEntityExceptionHandler {
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
-		
-		List<Erro> erros = criarListaErros(ex.getBindingResult()); 
-		
+
+		List<Erro> erros = criarListaErros(ex.getBindingResult());
+
 		return handleExceptionInternal(ex, erros, headers, HttpStatus.BAD_REQUEST, request);
 	}
 	
-	private List<Erro> criarListaErros(BindingResult bindingResult){
-		
+	@ExceptionHandler(NoSuchElementException.class)
+	public final ResponseEntity<ExceptionResponse> handleNotFoundException(NoSuchElementException ex, WebRequest request) {
+	    ExceptionResponse exceptionResponse = new ExceptionResponse(messageSource.getMessage("recurso.nao-encontrado", null, LocaleContextHolder.getLocale()),
+	        request.getDescription(false),HttpStatus.NOT_FOUND.getReasonPhrase());
+	    return new ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.NOT_FOUND);
+	  }
+	
+	
+	private List<Erro> criarListaErros(BindingResult bindingResult) {
+
 		List<Erro> erros = new ArrayList<>();
-		
-		for(FieldError fieldError : bindingResult.getFieldErrors()) {
+
+		for (FieldError fieldError : bindingResult.getFieldErrors()) {
 			String mensagemUsuario = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
 			String mensagemDesenvolvedor = fieldError.toString();
-			
+
 			erros.add(new Erro(mensagemUsuario, mensagemDesenvolvedor));
 		}
-		
+
 		return erros;
-		
 	}
-	
 
 	public static class Erro {
-		
+
 		private String mensagemUsuario;
 		private String mensagemDesenvolvedor;
-		
+
 		public Erro(String mensagemUsuario, String mensagemDesenvolvedor) {
 			super();
 			this.mensagemUsuario = mensagemUsuario;
@@ -79,8 +87,33 @@ public class AlgamoneyExceptionHandler extends ResponseEntityExceptionHandler {
 		public String getMensagemDesenvolvedor() {
 			return mensagemDesenvolvedor;
 		}
-		
-		
+
 	}
+	
+	public class ExceptionResponse {
+		private String mensagem;
+		private String detalhes;
+		private String httpCodeMessage;
+
+		public ExceptionResponse(String message, String details, String httpCodeMessage) {
+			super();
+			this.mensagem = message;
+			this.detalhes = details;
+			this.httpCodeMessage = httpCodeMessage;
+		}
+
+		public String getHttpCodeMessage() {
+			return httpCodeMessage;
+		}
+
+		public String getMensagem() {
+			return mensagem;
+		}
+
+		public String getDetalhes() {
+			return detalhes;
+		}
+	}
+	
 	
 }
