@@ -8,6 +8,7 @@ import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +59,13 @@ public class AlgamoneyExceptionHandler extends ResponseEntityExceptionHandler {
 	    return new ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.NOT_FOUND);
 	  }
 	
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ResponseEntity<ExceptionResponse> handleDataIntegrityViolationException (DataIntegrityViolationException ex, WebRequest request){
+		ExceptionResponse exceptionResponse = new ExceptionResponse(messageSource.getMessage("recurso.constraint-invalido", null, LocaleContextHolder.getLocale()),
+				ex.toString(),HttpStatus.BAD_REQUEST.getReasonPhrase());
+	    return new ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.BAD_REQUEST);
+		
+	}
 	
 	private List<Erro> criarListaErros(BindingResult bindingResult) {
 
